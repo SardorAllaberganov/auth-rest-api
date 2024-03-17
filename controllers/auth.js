@@ -177,3 +177,45 @@ exports.verifyUser = (req, res, next) => {
 			next(error);
 		});
 };
+
+exports.resetPassword = (req, res, next) => {
+	const currentPassword = req.body.currentPassword;
+	const newPassword = req.body.newPassword;
+	const confirmNewPassword = req.body.confirmNewPassword;
+	const userId = req.params.userId;
+	let loadedUser;
+	User.findById(userId)
+		.then((user) => {
+			if (!user) {
+				return res.status(404).json({
+					message: "User not found",
+				});
+			}
+			loadedUser = user;
+			return bcrypt.compare(currentPassword, user.password);
+		})
+		.then((isEqual) => {
+			if (!isEqual) {
+				return res.status(401).json({
+					message: "Wrong password",
+				});
+			}
+			if (newPassword !== confirmNewPassword) {
+				return res.status(401).json({
+					message: "New password and confirm password do not match",
+				});
+			}
+			return bcrypt.hash(newPassword, 12).then((hashedPassword) => {
+				loadedUser.password = hashedPassword;
+				return loadedUser.save();
+			});
+		})
+		.then((result) => {
+			return res
+				.status(200)
+				.json({ message: "Password successfully updated" });
+		})
+		.catch((error) => {
+			next(error);
+		});
+};
