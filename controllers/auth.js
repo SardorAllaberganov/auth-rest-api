@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { validationResult } = require("express-validator");
 const crypto = require("crypto");
-
 exports.signup = (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -124,7 +123,6 @@ exports.login = (req, res, next) => {
 			return res
 				.status(error.statusCode || 500)
 				.json({ message: error.message, data: error.data });
-			// next(error);
 		});
 };
 
@@ -218,4 +216,8 @@ exports.resetPassword = (req, res, next) => {
 		.catch((error) => {
 			next(error);
 		});
+};
+
+exports.logout = (req, res, next) => {
+	return res.status(200).json({ message: "Logged out successfully" });
 };

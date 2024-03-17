@@ -31,5 +31,6 @@ router.patch("/updateRole/:userId", isAuth, authController.updateRole);
 router.post("/login", authController.login);
 router.get("/verify/:userId/:token", authController.verifyUser);
 router.post("/reset-password/:userId", isAuth, authController.resetPassword);
+router.get("/logout", isAuth, authController.logout);
 
 module.exports = router;
